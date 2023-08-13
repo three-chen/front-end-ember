@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app" class="ember">
+        text1111
+        <!-- 1. 插值表达式 -->
+        <p>{{message}}asdf</p>
+        <img src="./public/steam.jpg" alt="steam">
+        text22222
+    </div>
+    <script src="./dist/umd/ember.js"></script>
+    <script>
+        let vm = new Ember({
+            el: '#app',
+            data: {
+                message: 'Hello World'
+            }
+        })
+    </script>
+</body>
+
+</html>
