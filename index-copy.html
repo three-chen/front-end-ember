@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <link rel="shortcut icon" href="favicon.ico" />
+  <meta charset="UTF-8">
+  <title>1001 TVs</title>
+  <style type="text/css">
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: #000;
+    }
+
+    .header {
+      height: 80px;
+      width: 100%;
+      display: flex;
+      background-color: #040108;
+      justify-content: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      flex-direction: column;
+    }
+
+    .header_container {
+      padding-left: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .header_des {
+      font-size: 16px;
+      font-weight: 400;
+      color: #fff;
+      margin-left: 16px;
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+    }
+
+    .header_icon img {
+      width: 48px;
+      height: 48px;
+    }
+
+    #videos {
+      width: 100%;
+      height: calc(100% - 80px);
+      padding-top: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #040108;
+    }
+
+    #videos video {
+      display: block;
+      margin: auto;
+      margin-top: 0;
+      z-index: 2;
+      max-width: 100vw;
+      max-height: 100%;
+      width: 100vw;
+      height: calc(100% - 10px);
+      object-fit: contain;
+    }
+
+    #pannel {
+      z-index: 10;
+      position: fixed;
+      top: calc(50% - 50px);
+      right: 0;
+      display: none;
+    }
+
+    .sidebar_top {
+      width: 54px;
+      height: 28px;
+      background-image: url(images/sidebar_top.png);
+      background-size: cover;
+      background-repeat: no-repeat;
+      margin-bottom: -1px;
+    }
+
+    .sidebar_bottom {
+      width: 54px;
+      height: 28px;
+      background-image: url(images/sidebar_bottom.png);
+      background-size: cover;
+      background-repeat: no-repeat;
+      margin-bottom: -1px;
+    }
+
+    #sound_tips {
+      position: absolute;
+      color: #152E42;
+      max-width: 320px;
+      border: 1px solid #000;
+      padding: 12px;
+      font-size: 14px;
+      color: #000;
+      top: calc(50% + 80px);
+      right: 64px;
+      box-sizing: border-box;
+      z-index: 5;
+      display: none;
+      background: #aab6c0;
+    }
+
+    #Sidebar {
+      width: 54px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      background-color: #30395C;
+    }
+
+    .icons {
+      margin-top: 20px;
+      width: 30px;
+      height: auto;
+      overflow: hidden;
+    }
+
+    .icons .img_box {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+
+    .img_shrink {
+      background-image: url(images/shrink.png);
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .img_expand {
+      background-image: url(images/expand.png);
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .img_sound {
+      background-image: url(images/sound_disable.png);
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .img_endlink {
+      background-image: url(images/disconnect.png);
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    /* .img_endlink:hover {
+      background-image: url(images/disconnect_active.png);
+    } */
+
+
+    #shrink {
+      margin-bottom: 20px;
+      margin-top: 0px;
+    }
+
+    #expand {
+      display: none;
+    }
+
+    .split {
+      border-bottom: 1px solid #5A648B;
+      width: 30px;
+      margin: 0 auto;
+    }
+
+    .connect {
+      margin-bottom: 5px;
+    }
+
+    #confirmEndLink,
+    #soundPermission {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 999;
+    }
+
+    .confirm-dialog {
+      width: calc(50%);
+      max-width: 500px;
+      top: 50%;
+      left: 50%;
+      margin-top: 0;
+      position: absolute;
+      background-color: #fff;
+      transform: translate(-50%, -50%);
+    }
+
+    .dialog_header {
+      padding-bottom: 20px;
+      padding-top: 20px;
+      border-bottom: 1px solid #E9E9E9;
+      margin-left: 20px;
+      padding-left: 0;
+      margin-right: 20px;
+    }
+
+    .dialog__title {
+      font-size: 18px;
+      color: #2d2f33;
+      line-height: 26px;
+      font-weight: 700;
+      text-shadow: none;
+    }
+
+    .dialog-body {
+      font-size: 14px;
+      color: #666;
+      line-height: 13px;
+      font-weight: 400;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      word-break: normal;
+      text-shadow: none;
+      margin-left: 20px;
+    }
+
+    .dialog_footer {
+      padding: 20px;
+      text-align: right;
+      box-sizing: border-box;
+
+    }
+
+    .dialog_btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      line-height: 1;
+      height: 32px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .cancelbtn {
+      border-radius: 2px;
+      padding: 8px 22px;
+      background: #F7FAF9;
+      border: 1px solid #DFE0DF;
+      color: #666;
+    }
+
+    .yesbtn {
+      border-radius: 2px;
+      padding: 8px 22px;
+      background: #41CE67;
+      border: 1px solid #41CE67;
+      color: #fff;
+    }
+
+    .pause_mask {
+      text-align: center;
+      background: rgba(0, 0, 0, .7);
+      color: #fff;
+      z-index: 5;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      display: none;
+    }
+
+    .pause_mask .pause-mask__con {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .pause_mask .pause-mask__img {
+      width: 200px;
+      height: 200px;
+      margin: auto;
+    }
+
+    .pause_mask .pause-mask__img img {
+      width: 128px;
+      height: auto;
+    }
+
+    .progress {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      display: block;
+    }
+
+    .progress_area {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .progress_area .progress_innerbox {
+      width: 821px;
+      border-radius: 20px;
+      border: 1px solid #FFF;
+      background: #FFFFFF33;
+    }
+
+    .progress_tips {
+      margin-top: 10px;
+      color: #fff;
+      font-size: 30px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .progress_des {
+      font-size: 20px;
+      color: #fff;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .progress .refresh {
+      display: flex;
+      justify-content: center;
+    }
+
+    .progress .refresh .refresh_btn {
+      width: 243px;
+      height: 74px;
+      border-radius: 50px;
+      position: absolute;
+      margin-top: 25px;
+      text-align: center;
+      color: #fff;
+      font-size: 28px;
+      line-height: 74px;
+      cursor: pointer;
+      background: linear-gradient(90deg, #D025A9 3.7%, #515AEE 100%);
+    }
+
+    .progress_img {
+      display: flex;
+      justify-content: center;
+    }
+
+    .progress_img img {
+      margin-right: 50px;
+    }
+
+    #progress_success {
+      display: block;
+    }
+
+    #progress_break {
+      display: none;
+    }
+
+    #progress_failed {
+      display: none;
+    }
+
+    #progress_close {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div id="confirmEndLink">
+      <div class="confirm-dialog">
+        <div class="dialog_header">
+          <div class="dialog__title">confirmEndLink_dialog__title:Tips</div>
+        </div>
+        <div class="dialog-body">
+          <div class="dialog-body__content">
+            confirmEndLink_dialog-body__content:Are you sure to close?
+          </div>
+        </div>
+        <div class="dialog_footer">
+          <span>
+            <button class="cancelbtn dialog_btn"> <span>confirmEndLink_cancelbtn:Cancel</span></button>
+            <button class="yesbtn dialog_btn"><span>confirmEndLink_yesbtn:OK</span></button>
+  
+          </span>
+        </div>
+      </div>
+  
+    </div>
+    <div id="soundPermission">
+      <div class="confirm-dialog">
+        <div class="dialog_header">
+          <div class="dialog__title">soundPermission_dialog__title:Tips</div>
+        </div>
+        <div class="dialog-body">
+          <div class="dialog-body__content">
+            soundPermission_dialog-body__content:The phone want to play sound, do you agree?
+          </div>
+        </div>
+        <div class="dialog_footer">
+          <span>
+            <button class="cancelbtn dialog_btn"> <span>soundPermission_cancelbtn:Mute</span></button>
+            <button class="yesbtn dialog_btn"><span>soundPermission_yesbtn:Unmute</span></button>
+          </span>
+        </div>
+      </div>
+  
+    </div>
+    <div class="header">
+      <div class="header_container">
+        <div class="header_icon"><img src="images/LOGO.png" alt=""></div>
+        <div class="header_des">
+          <p>header_header_des_p1:1001 TVs</p>
+          <p style="margin:0 20px">header_header_des_p2:|</p>
+          <p>header_header_des_p3:Browser Mirror</p>
+        </div>
+      </div>
+    </div>
+    <div id="videos">
+      <div id="pannel">
+        <div class="sidebar_top"></div>
+        <div id="Sidebar">
+          <div class="icons" title="Collapse">
+            <div class="img_box img_shrink" id="shrink"></div>
+          </div>
+          <div class="icons split"></div>
+  
+          <div class="icons" title="Sound">
+            <div class="img_box img_sound disable" id="sound"></div>
+          </div>
+          <div class="icons" title="Stop">
+            <div class="img_box img_endlink" id="endlink"></div>
+          </div>
+          <div class="icons" title="Expand">
+            <div class="img_box img_expand" id="expand"></div>
+          </div>
+        </div>
+        <div class="sidebar_bottom"></div>
+      </div>
+      <div id="sound_tips">
+        <span class="tips_text">videos_sound_tips_tips_text:No sound from phone</span>
+      </div>
+    </div>
+    <div class="pause_mask">
+      <div class="pause-mask__con">
+        <div class="pause-mask__img">
+          <img src="images/pause.png" alt="pause">
+        </div>
+        <div>pause_mask:Please tap resume to share screen</div>
+      </div>
+    </div>
+    <div class="progress">
+      <div class="progress_area">
+        <div class="progress_innerbox">
+          <div id="progress_success">
+            <div class="progress_tips">
+              <div>progress_progress_success_progress_tips:Connected!</div>
+            </div>
+            <div class="progress_des">
+              <div>progress_progress_success_progress_des:Please tap start live streaming to share screen</div>
+            </div>
+            <div class="progress_img"><img src="images/asklink.png" alt="Connected"></div>
+          </div>
+          <div id="progress_break">
+            <div class="progress_tips">
+              <div style="display: flex;align-items: center;"> <img src="images/!.png" style="height: 40px;width: auto;"
+                  alt="!"></div>
+              <div style="margin-left:15px">progress_progress_break_progress_tips:Connection Lost! </div>
+            </div>
+            <div class="progress_des">
+              <div>progress_progress_break_progress_des:Please tap start live streaming to share screen</div>
+            </div>
+            <div class="progress_img"><img src="images/breaklink.png" alt="Connection Lost"></div>
+          </div>
+          <div id="progress_failed">
+            <div class="progress_tips">
+              <div style="margin-left:15px">progress_progress_failed_progress_tips:Fail to connect! </div>
+            </div>
+            <div class="progress_des">
+              <div>progress_progress_failed_progress_des:Please refresh to reconnect</div>
+            </div>
+            <div class="progress_img"><img src="images/breaklink.png" alt="Connection Lost"></div>
+            <div class="refresh">
+              <div class="refresh_btn">progress_progress_failed_refresh_refresh_btn:Refresh</div>
+            </div>
+          </div>
+          <div id="progress_close">
+            <div class="progress_tips">
+              <div style="margin-left:15px">progress_progress_close_progress_tips:Mirroring END </div>
+            </div>
+            <div class="progress_des">
+              <div>progress_progress_close_progress_des:MIrroring END</div>
+            </div>
+            <div class="progress_img"><img src="images/endlink.png" style="margin: 0;" alt="MIrroring END"></div>
+            <div class="refresh">
+              <div class="refresh_btn">progress_progress_close_refresh_refresh_btn:Back</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="./dist/umd/ember.js"></script>
+<script>
+  let vm = new Ember({
+    el: '#app',
+    data: {
+      message: 'Hello World'
+    }
+  })
+</script>
+<!-- <script type="application/javascript" src="SkyRTCClient.js"></script>
+<script type="application/javascript">
+  // 确认关闭连接
+  var confirmEndLink = document.getElementById('confirmEndLink')
+  var end_btn_no = document.getElementsByClassName('cancelbtn')[0];
+  var end_btn_yes = document.getElementsByClassName('yesbtn')[0];
+  // 声音权限
+  var soundPermission = document.getElementById('soundPermission')
+  var sound_btn_no = document.getElementsByClassName('cancelbtn')[1];
+  var sound_btn_yes = document.getElementsByClassName('yesbtn')[1];
+  // 图标pannel
+  var pannel = document.getElementById('pannel');
+  var soundicon = document.getElementById('sound');
+  var endlinkicon = document.getElementById('endlink');
+  var shrink = document.getElementById('shrink');
+  var expand = document.getElementById('expand');
+  var icons = document.getElementsByClassName('icons');
+  // 声音提示
+  var sound_tip = document.getElementById('sound_tips')
+  // video的外面的box
+  var videos = document.getElementById('videos');
+  // 暂停
+  var pause_mask = document.getElementsByClassName('pause_mask')[0];
+  // 状态进程
+  var progress = document.getElementsByClassName('progress')[0];
+  var progress_break = document.getElementById('progress_break');
+  var progress_failed = document.getElementById('progress_failed');
+  var progress_success = document.getElementById('progress_success');
+  var progress_close = document.getElementById('progress_close')
+  // 返回扫码页面
+  var back_btn = document.getElementsByClassName("refresh_btn")
+  // 点击 刷新/返回 重新回到二维码页面
+  for (let i = 0; i < back_btn.length; i++) {
+    back_btn[i].addEventListener('click', function () {
+      location.href = 'https://www.1001tvs.cn/browser'
+    })
+  }
+  // 点击断开连接
+  endlinkicon.addEventListener('click', function () {
+    confirmEndLink.style.display = 'block'
+  })
+  // 确认是否关闭连接
+  // 是
+  end_btn_yes.addEventListener('click', function () {
+    pannel.style.display = 'none'
+    confirmEndLink.style.display = 'none'
+    progress.style.display = 'block';
+    progress_close.style.display = 'block'
+    progress_break.style.display = 'none'
+    progress_failed.style.display = 'none'
+    progress_success.style.display = 'none'
+    videos.removeChild(videoElement);
+    rtc.exit();
+  })
+  // 否
+  end_btn_no.addEventListener('click', function () {
+    confirmEndLink.style.display = 'none'
+  })
+  // 隐藏icons pannel
+  shrink.addEventListener('click', function () {
+    for (let i = 0; i < icons.length - 1; i++) {
+      icons[i].style.display = 'none'
+    }
+    expand.style.display = 'block'
+  })
+  // 展示icons pannel
+  expand.addEventListener('click', function () {
+    for (let i = 0; i < icons.length - 1; i++) {
+      icons[i].style.display = 'block'
+    }
+    expand.style.display = 'none'
+  })
+
+  var opensound = false;
+  var videoElement;
+  var result;
+
+  // 接收到开启声音权限后
+  sound_btn_no.addEventListener('click', function () {
+    soundicon.className = "img_box img_sound"
+    soundicon.style.backgroundImage = 'url(images/close_sound.png)'
+    opensound = false;
+    videoElement.volume = 0;
+    soundPermission.style.display = 'none';
+    videoElement.muted = true;
+  })
+  sound_btn_yes.addEventListener('click', function () {
+    soundicon.className = "img_box img_sound"
+    soundicon.style.backgroundImage = 'url(images/open_sound.png)'
+    opensound = true;
+    videoElement.volume = 1;
+    soundPermission.style.display = 'none';
+    videoElement.muted = false;
+  })
+
+  //点击声音icon 浏览器声音
+  soundicon.addEventListener('click', function () {
+    if (soundicon.className == 'img_box img_sound') {
+      opensound = !opensound;
+      if (opensound == true) {
+        soundicon.style.backgroundImage = 'url(images/open_sound.png)';
+        videoElement.volume = 1;
+        videoElement.muted = false
+      }
+      else {
+        soundicon.style.backgroundImage = 'url(images/close_sound.png)';
+        videoElement.volume = 0;
+        videoElement.muted = true
+      }
+    }
+    else if (soundicon.className.indexOf('disable')) {
+      sound_tip.style.display = 'block'
+      setTimeout(function () {
+        sound_tip.style.display = 'none'
+      }, 2000)
+    }
+  })
+
+  var rtc = SkyRTC();
+  //成功创建WebSocket连接
+  rtc.on("connected", function (socket) {
+    //创建本地视频流
+    rtc.createStream({
+      "video": false,
+      "audio": false
+    });
+  });
+
+  //接收到其他用户的视频流
+  rtc.on('pc_add_stream', function (stream, socketId) {
+    if (!sessionStorage.getItem('socketId')) {
+
+      sessionStorage.setItem('socketId', 'true')
+      var newVideo = document.createElement("video");
+      id = socketId;
+      newVideo.setAttribute("class", "other");
+      newVideo.setAttribute("autoplay", "autoplay");
+      newVideo.muted = true
+      newVideo.setAttribute("playsinline", "");
+      newVideo.setAttribute("id", id);
+      videos.appendChild(newVideo);
+      rtc.attachStream(stream, id);
+      videoElement = document.querySelector('video');
+      // 找到video后icons pannel 展示出来
+      pannel.style.display = 'block';
+      progress.style.display = 'none';
+    }
+    else {
+
+    }
+  });
+  //接收到声音请求
+  rtc.on('open_audio', function (socketId, mute) {
+    if (mute == 0) {
+      if (!sessionStorage.getItem('soundPermission')) {
+        sessionStorage.setItem('soundPermission', 'true');
+        soundPermission.style.display = 'block';
+      }
+      soundicon.className = 'img_box img_sound';
+      soundicon.style.backgroundImage = 'url(images/close_sound.png)'
+    }
+    else if (mute == 1) {
+      soundicon.className = 'img_box img_sound disable'
+      videoElement.mute = true;
+      videoElement.volume = 0;
+      opensound = false;
+      soundicon.style.backgroundImage = 'url(images/sound_disable.png)'
+    }
+
+  });
+  //接收到暂停请求
+  rtc.on('pause', function (socketId, paused) {
+    if (paused == 1) {
+      pause_mask.style.display = 'block'
+    }
+    else if (paused == 0) {
+      pause_mask.style.display = 'none'
+    }
+  });
+  //接收到断开请求
+  rtc.on('remove_peer', function (socketId) {
+    if (videoElement.id == socketId) {
+      pannel.style.display = 'none'
+      confirmEndLink.style.display = 'none'
+      progress.style.display = 'block';
+      progress_close.style.display = 'block'
+      progress_break.style.display = 'none'
+      progress_failed.style.display = 'none'
+      progress_success.style.display = 'none'
+      videos.removeChild(videoElement);
+    }
+  });
+  //连接WebSocket服务器
+  rtc.connect("ws:" + window.location.href.substring(window.location.protocol.length).split('#')[0], window.location.hash.slice(1));
+</script>
+<script>
+  // 数据收集
+  // MD5
+  !function (n) { "use strict"; function t(n, t) { var r = (65535 & n) + (65535 & t); return (n >> 16) + (t >> 16) + (r >> 16) << 16 | 65535 & r } function r(n, t) { return n << t | n >>> 32 - t } function e(n, e, o, u, c, f) { return t(r(t(t(e, n), t(u, f)), c), o) } function o(n, t, r, o, u, c, f) { return e(t & r | ~t & o, n, t, u, c, f) } function u(n, t, r, o, u, c, f) { return e(t & o | r & ~o, n, t, u, c, f) } function c(n, t, r, o, u, c, f) { return e(t ^ r ^ o, n, t, u, c, f) } function f(n, t, r, o, u, c, f) { return e(r ^ (t | ~o), n, t, u, c, f) } function i(n, r) { n[r >> 5] |= 128 << r % 32, n[14 + (r + 64 >>> 9 << 4)] = r; var e, i, a, d, h, l = 1732584193, g = -271733879, v = -1732584194, m = 271733878; for (e = 0; e < n.length; e += 16)i = l, a = g, d = v, h = m, g = f(g = f(g = f(g = f(g = c(g = c(g = c(g = c(g = u(g = u(g = u(g = u(g = o(g = o(g = o(g = o(g, v = o(v, m = o(m, l = o(l, g, v, m, n[e], 7, -680876936), g, v, n[e + 1], 12, -389564586), l, g, n[e + 2], 17, 606105819), m, l, n[e + 3], 22, -1044525330), v = o(v, m = o(m, l = o(l, g, v, m, n[e + 4], 7, -176418897), g, v, n[e + 5], 12, 1200080426), l, g, n[e + 6], 17, -1473231341), m, l, n[e + 7], 22, -45705983), v = o(v, m = o(m, l = o(l, g, v, m, n[e + 8], 7, 1770035416), g, v, n[e + 9], 12, -1958414417), l, g, n[e + 10], 17, -42063), m, l, n[e + 11], 22, -1990404162), v = o(v, m = o(m, l = o(l, g, v, m, n[e + 12], 7, 1804603682), g, v, n[e + 13], 12, -40341101), l, g, n[e + 14], 17, -1502002290), m, l, n[e + 15], 22, 1236535329), v = u(v, m = u(m, l = u(l, g, v, m, n[e + 1], 5, -165796510), g, v, n[e + 6], 9, -1069501632), l, g, n[e + 11], 14, 643717713), m, l, n[e], 20, -373897302), v = u(v, m = u(m, l = u(l, g, v, m, n[e + 5], 5, -701558691), g, v, n[e + 10], 9, 38016083), l, g, n[e + 15], 14, -660478335), m, l, n[e + 4], 20, -405537848), v = u(v, m = u(m, l = u(l, g, v, m, n[e + 9], 5, 568446438), g, v, n[e + 14], 9, -1019803690), l, g, n[e + 3], 14, -187363961), m, l, n[e + 8], 20, 1163531501), v = u(v, m = u(m, l = u(l, g, v, m, n[e + 13], 5, -1444681467), g, v, n[e + 2], 9, -51403784), l, g, n[e + 7], 14, 1735328473), m, l, n[e + 12], 20, -1926607734), v = c(v, m = c(m, l = c(l, g, v, m, n[e + 5], 4, -378558), g, v, n[e + 8], 11, -2022574463), l, g, n[e + 11], 16, 1839030562), m, l, n[e + 14], 23, -35309556), v = c(v, m = c(m, l = c(l, g, v, m, n[e + 1], 4, -1530992060), g, v, n[e + 4], 11, 1272893353), l, g, n[e + 7], 16, -155497632), m, l, n[e + 10], 23, -1094730640), v = c(v, m = c(m, l = c(l, g, v, m, n[e + 13], 4, 681279174), g, v, n[e], 11, -358537222), l, g, n[e + 3], 16, -722521979), m, l, n[e + 6], 23, 76029189), v = c(v, m = c(m, l = c(l, g, v, m, n[e + 9], 4, -640364487), g, v, n[e + 12], 11, -421815835), l, g, n[e + 15], 16, 530742520), m, l, n[e + 2], 23, -995338651), v = f(v, m = f(m, l = f(l, g, v, m, n[e], 6, -198630844), g, v, n[e + 7], 10, 1126891415), l, g, n[e + 14], 15, -1416354905), m, l, n[e + 5], 21, -57434055), v = f(v, m = f(m, l = f(l, g, v, m, n[e + 12], 6, 1700485571), g, v, n[e + 3], 10, -1894986606), l, g, n[e + 10], 15, -1051523), m, l, n[e + 1], 21, -2054922799), v = f(v, m = f(m, l = f(l, g, v, m, n[e + 8], 6, 1873313359), g, v, n[e + 15], 10, -30611744), l, g, n[e + 6], 15, -1560198380), m, l, n[e + 13], 21, 1309151649), v = f(v, m = f(m, l = f(l, g, v, m, n[e + 4], 6, -145523070), g, v, n[e + 11], 10, -1120210379), l, g, n[e + 2], 15, 718787259), m, l, n[e + 9], 21, -343485551), l = t(l, i), g = t(g, a), v = t(v, d), m = t(m, h); return [l, g, v, m] } function a(n) { var t, r = "", e = 32 * n.length; for (t = 0; t < e; t += 8)r += String.fromCharCode(n[t >> 5] >>> t % 32 & 255); return r } function d(n) { var t, r = []; for (r[(n.length >> 2) - 1] = void 0, t = 0; t < r.length; t += 1)r[t] = 0; var e = 8 * n.length; for (t = 0; t < e; t += 8)r[t >> 5] |= (255 & n.charCodeAt(t / 8)) << t % 32; return r } function h(n) { return a(i(d(n), 8 * n.length)) } function l(n, t) { var r, e, o = d(n), u = [], c = []; for (u[15] = c[15] = void 0, o.length > 16 && (o = i(o, 8 * n.length)), r = 0; r < 16; r += 1)u[r] = 909522486 ^ o[r], c[r] = 1549556828 ^ o[r]; return e = i(u.concat(d(t)), 512 + 8 * t.length), a(i(c.concat(e), 640)) } function g(n) { var t, r, e = ""; for (r = 0; r < n.length; r += 1)t = n.charCodeAt(r), e += "0123456789abcdef".charAt(t >>> 4 & 15) + "0123456789abcdef".charAt(15 & t); return e } function v(n) { return unescape(encodeURIComponent(n)) } function m(n) { return h(v(n)) } function p(n) { return g(m(n)) } function s(n, t) { return l(v(n), v(t)) } function C(n, t) { return g(s(n, t)) } function A(n, t, r) { return t ? r ? s(t, n) : C(t, n) : r ? m(n) : p(n) } "function" == typeof define && define.amd ? define(function () { return A }) : "object" == typeof module && module.exports ? module.exports = A : n.md5 = A }(this);
+  //
+  function S4() {
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+  };
+
+  function guid() {
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+  };
+  function processID() {
+    const uuid = 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = Math.random() * 16 | 0,
+        v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+    return uuid;
+  }
+  const GUID = guid().toUpperCase();
+  const Key = "E95EAAFA-445A-45BA-BCD9-FB39595793DE";
+  var userAgentStr = navigator.userAgent
+  var url = "https://udc.nero.com/api/Message/AddSingleMessage";
+  var mysessionId = GUID;
+  var timestamp = Date.now();
+  var mydeviceId;
+  var mytype = 19;
+  var mycontent = 'user_agent:' + userAgentStr + "," + 'feature_version:1'
+  var myplatform = 6;
+  if (!localStorage.getItem('deviceId')) {
+    mydeviceId = processID();
+    localStorage.setItem('deviceId', mydeviceId);
+  }
+  else {
+    mydeviceId = localStorage.getItem('deviceId');
+  }
+  var info = mydeviceId + '==' + Key + '==' + mytype + '==' + myplatform + '==' + timestamp;
+  var md5_info = md5(info).toUpperCase();
+
+  function mypost() {
+    let obj = {
+      "content": mycontent,
+      "type": mytype,
+      "platform": 6,
+      "deviceId": mydeviceId,
+      "sessionId": mysessionId,
+      "clientDateMS": timestamp,
+      "mD5": md5_info,
+      "appVersion": "",
+      "subTitle": "1001Tvs",
+      "comment": ""
+    };
+    let json_obj = JSON.stringify(obj);
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.open('POST', url, true);
+    httpRequest.setRequestHeader('Content-Type', 'application/json');
+    httpRequest.send(json_obj);
+    httpRequest.onreadystatechange = function () {
+      if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        let json = httpRequest.responseText;
+
+        // console.log(success);
+      }
+    };
+  }
+  if (!sessionStorage.getItem('1001tvs')) {
+    mypost();
+    window.onload = function () {
+      sessionStorage.setItem('1001tvs', 'true');
+    }
+  }
+</script> -->
+
+</html>
