@@ -117,6 +117,10 @@ function parseHtmlToAst(html) {
             advance(tempText.length);
             currentMatch.type = 3;
             tempText = tempText.trim();
+            if (!tempText) {
+                status = "tag_open";
+                return;
+            }
             let temp = tempText.match(templateText);
             if (temp) {
                 currentMatch["token"] = temp[1];
@@ -188,3 +192,4 @@ function parseHtmlToAst(html) {
 export {
     parseHtmlToAst
 }
+
