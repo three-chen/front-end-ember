@@ -389,49 +389,49 @@
     <div id="confirmEndLink">
       <div class="confirm-dialog">
         <div class="dialog_header">
-          <div class="dialog__title">confirmEndLink_dialog__title:Tips</div>
+          <div class="dialog__title">{{confirmEndLink_dialog__title}}</div>
         </div>
         <div class="dialog-body">
           <div class="dialog-body__content">
-            confirmEndLink_dialog-body__content:Are you sure to close?
+            {{confirmEndLink_dialog-body__content}}
           </div>
         </div>
         <div class="dialog_footer">
           <span>
-            <button class="cancelbtn dialog_btn"> <span>confirmEndLink_cancelbtn:Cancel</span></button>
-            <button class="yesbtn dialog_btn"><span>confirmEndLink_yesbtn:OK</span></button>
-  
+            <button class="cancelbtn dialog_btn"> <span>{{confirmEndLink_cancelbtnl}}</span></button>
+            <button class="yesbtn dialog_btn"><span>{{confirmEndLink_yesbtn}}</span></button>
+
           </span>
         </div>
       </div>
-  
+
     </div>
     <div id="soundPermission">
       <div class="confirm-dialog">
         <div class="dialog_header">
-          <div class="dialog__title">soundPermission_dialog__title:Tips</div>
+          <div class="dialog__title">{{soundPermission_dialog__title}}</div>
         </div>
         <div class="dialog-body">
           <div class="dialog-body__content">
-            soundPermission_dialog-body__content:The phone want to play sound, do you agree?
+            {{soundPermission_dialog-body__content}}
           </div>
         </div>
         <div class="dialog_footer">
           <span>
-            <button class="cancelbtn dialog_btn"> <span>soundPermission_cancelbtn:Mute</span></button>
-            <button class="yesbtn dialog_btn"><span>soundPermission_yesbtn:Unmute</span></button>
+            <button class="cancelbtn dialog_btn"> <span>{{soundPermission_cancelbtn}}</span></button>
+            <button class="yesbtn dialog_btn"><span>{{soundPermission_yesbtn}}</span></button>
           </span>
         </div>
       </div>
-  
+
     </div>
     <div class="header">
       <div class="header_container">
         <div class="header_icon"><img src="images/LOGO.png" alt=""></div>
         <div class="header_des">
-          <p>header_header_des_p1:1001 TVs</p>
-          <p style="margin:0 20px">header_header_des_p2:|</p>
-          <p>header_header_des_p3:Browser Mirror</p>
+          <p>{{header_header_des_p1}}</p>
+          <p style="margin:0 20px">{{header_header_des_p2}}</p>
+          <p>{{header_header_des_p3}}</p>
         </div>
       </div>
     </div>
@@ -443,7 +443,7 @@
             <div class="img_box img_shrink" id="shrink"></div>
           </div>
           <div class="icons split"></div>
-  
+
           <div class="icons" title="Sound">
             <div class="img_box img_sound disable" id="sound"></div>
           </div>
@@ -457,7 +457,7 @@
         <div class="sidebar_bottom"></div>
       </div>
       <div id="sound_tips">
-        <span class="tips_text">videos_sound_tips_tips_text:No sound from phone</span>
+        <span class="tips_text">{{videos_sound_tips_tips_text}}</span>
       </div>
     </div>
     <div class="pause_mask">
@@ -465,7 +465,7 @@
         <div class="pause-mask__img">
           <img src="images/pause.png" alt="pause">
         </div>
-        <div>pause_mask:Please tap resume to share screen</div>
+        <div>{{pause_mask}}</div>
       </div>
     </div>
     <div class="progress">
@@ -473,10 +473,10 @@
         <div class="progress_innerbox">
           <div id="progress_success">
             <div class="progress_tips">
-              <div>progress_progress_success_progress_tips:Connected!</div>
+              <div>{{progress_progress_success_progress_tips}}</div>
             </div>
             <div class="progress_des">
-              <div>progress_progress_success_progress_des:Please tap start live streaming to share screen</div>
+              <div>{{progress_progress_success_progress_des}}</div>
             </div>
             <div class="progress_img"><img src="images/asklink.png" alt="Connected"></div>
           </div>
@@ -484,35 +484,35 @@
             <div class="progress_tips">
               <div style="display: flex;align-items: center;"> <img src="images/!.png" style="height: 40px;width: auto;"
                   alt="!"></div>
-              <div style="margin-left:15px">progress_progress_break_progress_tips:Connection Lost! </div>
+              <div style="margin-left:15px">{{progress_progress_break_progress_tips}}</div>
             </div>
             <div class="progress_des">
-              <div>progress_progress_break_progress_des:Please tap start live streaming to share screen</div>
+              <div>{{progress_progress_break_progress_des}}</div>
             </div>
             <div class="progress_img"><img src="images/breaklink.png" alt="Connection Lost"></div>
           </div>
           <div id="progress_failed">
             <div class="progress_tips">
-              <div style="margin-left:15px">progress_progress_failed_progress_tips:Fail to connect! </div>
+              <div style="margin-left:15px">{{progress_progress_failed_progress_tips}}</div>
             </div>
             <div class="progress_des">
-              <div>progress_progress_failed_progress_des:Please refresh to reconnect</div>
+              <div>{{progress_progress_failed_progress_des}}</div>
             </div>
             <div class="progress_img"><img src="images/breaklink.png" alt="Connection Lost"></div>
             <div class="refresh">
-              <div class="refresh_btn">progress_progress_failed_refresh_refresh_btn:Refresh</div>
+              <div class="refresh_btn">{{progress_progress_failed_refresh_refresh_btn}}</div>
             </div>
           </div>
           <div id="progress_close">
             <div class="progress_tips">
-              <div style="margin-left:15px">progress_progress_close_progress_tips:Mirroring END </div>
+              <div style="margin-left:15px">{{progress_progress_close_progress_tips}}</div>
             </div>
             <div class="progress_des">
-              <div>progress_progress_close_progress_des:MIrroring END</div>
+              <div>{{progress_progress_close_progress_des}}</div>
             </div>
             <div class="progress_img"><img src="images/endlink.png" style="margin: 0;" alt="MIrroring END"></div>
             <div class="refresh">
-              <div class="refresh_btn">progress_progress_close_refresh_refresh_btn:Back</div>
+              <div class="refresh_btn">{{progress_progress_close_refresh_refresh_btn}}</div>
             </div>
           </div>
         </div>

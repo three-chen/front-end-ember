@@ -12,6 +12,7 @@
     const startTagClose = /^\s*(\/?)>/;
     const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`);
     const commentTag = /^<!\--/;
+    const templateText = /\{\{(.+?)\}\}/;
     function parseHtmlToAst(html) {
       let text = html;
       let status = "tag_open";
@@ -113,6 +114,11 @@
           advance(tempText.length);
           currentMatch.type = 3;
           tempText = tempText.trim();
+          let temp = tempText.match(templateText);
+          if (temp) {
+            currentMatch["token"] = temp[1];
+          }
+          currentMatch.text = tempText;
         }
         status = "tag_brother";
       }

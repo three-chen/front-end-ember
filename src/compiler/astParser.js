@@ -5,7 +5,8 @@ const qnameCapture = `((?:${ncname}\\:)?${ncname})`
 const startTagOpen = new RegExp(`^<${qnameCapture}`)
 const startTagClose = /^\s*(\/?)>/
 const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`)
-const commentTag = /^<!\--/;
+const commentTag = /^<!\--/
+const templateText = /\{\{(.+?)\}\}/
 
 function parseHtmlToAst(html) {
     let text = html;
@@ -115,7 +116,12 @@ function parseHtmlToAst(html) {
         if (tempText) {
             advance(tempText.length);
             currentMatch.type = 3;
-            tempText = tempText.trim()
+            tempText = tempText.trim();
+            let temp = tempText.match(templateText);
+            if (temp) {
+                currentMatch["token"] = temp[1];
+            }
+            currentMatch.text = tempText;
         }
         status = "tag_brother";
     }
