@@ -12,7 +12,6 @@
     const startTagClose = /^\s*(\/?)>/;
     const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`);
     const commentTag = /^<!\--/;
-    const templateText = /\{\{(.+?)\}\}/;
     function parseHtmlToAst(html) {
       let text = html;
       let status = "tag_open";
@@ -118,10 +117,10 @@
             status = "tag_open";
             return;
           }
-          let temp = tempText.match(templateText);
-          if (temp) {
-            currentMatch["token"] = temp[1];
-          }
+          // let temp = tempText.match(templateText);
+          // if (temp) {
+          //     currentMatch["token"] = temp[1];
+          // }
           currentMatch.text = tempText;
         }
         status = "tag_brother";
@@ -182,7 +181,7 @@
     }
 
     /*
-    _C('div',
+    _c('div',
         {id:"app",style:{color:"red",font-size:1rem}},
         _v("hello,"+_s(name)+"welcom"),
         _c('span',{class:"text"},_v(_s(age))),
@@ -198,8 +197,19 @@
       } else if (node.type === 3) {
         let text = node.text;
         if (!doubleBrace.test(text)) {
-          return `_v(${JSON.stringify(text)})`;
+          return [`_v(${JSON.stringify(text)})`];
+        } else {
+          let match;
+          let code = [];
+          while (match = doubleBrace.exec(text)) {
+            console.log(match);
+            let str = match[1];
+            code.push(`_v(${JSON.stringify(str)})`);
+          }
+          return code;
         }
+      } else if (node.type === 8) {
+        return [`-v("${node.text}")`];
       }
     }
     function getChildren(ast) {
@@ -214,22 +224,33 @@
       let attrStr = "";
       for (const key in attrs) {
         if (Object.hasOwnProperty.call(attrs, key)) {
-          attrs[key];
+          let value = attrs[key];
+          if (key === "style") {
+            let styleArray = value.split(';');
+            value = styleArray.join(',');
+            value = value.substring(0, value.length - 1);
+            attrStr += `${key}:{${value}},`;
+          } else {
+            attrStr += `${key}:"${value}",`;
+          }
         }
       }
+      attrStr = attrStr.substring(0, attrStr.length - 1);
       return `${attrStr}`;
     }
     function generate(ast) {
       let children = getChildren(ast);
-      `_c('${ast.sel}',
-            ${ast.attrs.length > 0 ? `${formatAttrs(ast.attrs)}` : 'undefined'},
+      let code = `_c('${ast.sel}',
+            {${Object.keys(ast.attrs).length > 0 ? `${formatAttrs(ast.attrs)}` : 'undefined'}},
             ${children.length > 0 ? children : 'undefined'}`;
+      return code;
     }
 
     function createRenderFunction(html) {
       const ast = parseHtmlToAst(html);
-      generate(ast);
+      const code = generate(ast);
       console.log(ast);
+      console.log(code);
     }
 
     // import initState from './initState';

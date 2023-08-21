@@ -4,6 +4,7 @@ function createRenderFunction(html) {
     const ast = parseHtmlToAst(html);
     const code = generate(ast);
     console.log(ast);
+    console.log(code);
 }
 
 export {

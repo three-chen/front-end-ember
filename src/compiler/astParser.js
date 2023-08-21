@@ -121,10 +121,10 @@ function parseHtmlToAst(html) {
                 status = "tag_open";
                 return;
             }
-            let temp = tempText.match(templateText);
-            if (temp) {
-                currentMatch["token"] = temp[1];
-            }
+            // let temp = tempText.match(templateText);
+            // if (temp) {
+            //     currentMatch["token"] = temp[1];
+            // }
             currentMatch.text = tempText;
         }
         status = "tag_brother";
