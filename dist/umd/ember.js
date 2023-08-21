@@ -190,34 +190,42 @@
 
     */
 
-    const doubleBrace = /\{\{((?:.l\r?\n)+?)\}\}/g;
+    const doubleBrace = /\{\{((?:.|\r?\n)+?)\}\}/g;
     function generateChild(node) {
       if (node.type === 1) {
         return generate(node);
       } else if (node.type === 3) {
         let text = node.text;
         if (!doubleBrace.test(text)) {
-          return [`_v(${JSON.stringify(text)})`];
+          return `_v(${JSON.stringify(text)})`;
         } else {
           let match;
           let code = [];
+          let index = 0;
+          let lastIndex = doubleBrace.lastIndex = 0;
           while (match = doubleBrace.exec(text)) {
-            console.log(match);
-            let str = match[1];
-            code.push(`_v(${JSON.stringify(str)})`);
+            index = match.index;
+            if (index > lastIndex) {
+              code.push(JSON.stringify(text.slice(lastIndex, index)));
+            }
+            code.push(`_s(${match[1].trim()})`);
+            lastIndex = doubleBrace.lastIndex;
           }
-          return code;
+          if (lastIndex < text.length) {
+            code.push(JSON.stringify(text.slice(lastIndex)));
+          }
+          return `_v(${code.join('+')})`;
         }
       } else if (node.type === 8) {
-        return [`-v("${node.text}")`];
+        return `_v("${JSON.stringify(node.text)}")`;
       }
     }
     function getChildren(ast) {
       let children = ast.children;
       if (children) {
         return children.map(c => {
-          return generateChild(c).join(',');
-        });
+          return generateChild(c);
+        }).join(',');
       }
     }
     function formatAttrs(attrs) {
@@ -226,23 +234,23 @@
         if (Object.hasOwnProperty.call(attrs, key)) {
           let value = attrs[key];
           if (key === "style") {
+            let style = {};
             let styleArray = value.split(';');
-            value = styleArray.join(',');
-            value = value.substring(0, value.length - 1);
-            attrStr += `${key}:{${value}},`;
-          } else {
-            attrStr += `${key}:"${value}",`;
+            styleArray.forEach(el => {
+              let [key, value] = el.split(':');
+              style[key] = value;
+            });
+            value = style;
           }
+          attrStr += `${key}:${JSON.stringify(value)},`;
         }
       }
       attrStr = attrStr.substring(0, attrStr.length - 1);
-      return `${attrStr}`;
+      return attrStr;
     }
     function generate(ast) {
       let children = getChildren(ast);
-      let code = `_c('${ast.sel}',
-            {${Object.keys(ast.attrs).length > 0 ? `${formatAttrs(ast.attrs)}` : 'undefined'}},
-            ${children.length > 0 ? children : 'undefined'}`;
+      let code = `_c('${ast.sel}',${Object.keys(ast.attrs).length > 0 ? `{${formatAttrs(ast.attrs)}}` : 'undefined'}${children.length > 0 ? `,${children}` : ''})`;
       return code;
     }
 
