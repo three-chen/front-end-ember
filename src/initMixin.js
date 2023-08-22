@@ -1,5 +1,6 @@
 // import initState from './initState';
 import { createRenderFunction } from './compiler';
+import { mountComponent } from './lifeCycle';
 
 function initMixin(Ember) {
     Ember.prototype._init = function (options) {
@@ -19,6 +20,8 @@ function initMixin(Ember) {
             options.render = createRenderFunction(vm.$el.outerHTML);
         }
         // options.render();
+
+        mountComponent(vm);
     }
 }
 

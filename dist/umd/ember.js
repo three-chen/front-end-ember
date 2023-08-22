@@ -182,7 +182,7 @@
 
     /*
     _c('div',
-        {id:"app",style:{color:"red",font-size:1rem}},
+        {id:"app",style:{"color":"red","font-size":1rem}},
         _v("hello,"+_s(name)+"welcom"),
         _c('span',{class:"text"},_v(_s(age))),
         _c('p',undefined,_v("welcom"))
@@ -259,6 +259,15 @@
       const code = generate(ast);
       console.log(ast);
       console.log(code);
+      return new Function(`reutrn ${code}`);
+    }
+
+    function mountComponent(vm) {
+      vm._update(vm._render());
+    }
+    function lifeCycleMixin(Ember) {
+      Ember.prototype._update = function (vnode) {
+      };
     }
 
     // import initState from './initState';
@@ -280,6 +289,45 @@
           options.render = createRenderFunction(vm.$el.outerHTML);
         }
         // options.render();
+
+        mountComponent(vm);
+      };
+    }
+
+    function createElement(tag, attrs = {}, ...children) {
+      return vnode(tag, attrs, children);
+    }
+    function createTextVnode(text) {
+      return vnode(undefined, undefined, undefined, text);
+    }
+    function vnode(tag, props, children, text) {
+      return {
+        tag,
+        props,
+        children,
+        text
+      };
+    }
+
+    function renderMixin(Ember) {
+      Ember.prototype._c = function () {
+        return createElement(...arguments);
+      };
+      Ember.prototype._s = function (value) {
+        if (value === undefined || value === null) {
+          return;
+        }
+        return typeof value === 'object' ? JSON.stringify(value) : value;
+      };
+      Ember.prototype._v = function () {
+        return createTextVnode(text);
+      };
+      Ember.prototype._render = function () {
+        const vm = this;
+        const render = vm.$options.render;
+        const vnode = render.call(vm);
+        console.log(vnode);
+        return vnode;
       };
     }
 
@@ -287,6 +335,8 @@
       this._init(options);
     }
     initMixin(Ember);
+    lifeCycleMixin(Ember);
+    renderMixin(Ember);
 
     return Ember;
 

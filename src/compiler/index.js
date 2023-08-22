@@ -5,6 +5,7 @@ function createRenderFunction(html) {
     const code = generate(ast);
     console.log(ast);
     console.log(code);
+    return new Function(`reutrn ${code}`);
 }
 
 export {

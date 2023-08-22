@@ -1,6 +1,6 @@
 /*
 _c('div',
-    {id:"app",style:{color:"red",font-size:1rem}},
+    {id:"app",style:{"color":"red","font-size":1rem}},
     _v("hello,"+_s(name)+"welcom"),
     _c('span',{class:"text"},_v(_s(age))),
     _c('p',undefined,_v("welcom"))
