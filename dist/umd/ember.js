@@ -217,7 +217,7 @@
           return `_v(${code.join('+')})`;
         }
       } else if (node.type === 8) {
-        return `_v("${JSON.stringify(node.text)}")`;
+        return `_v(${JSON.stringify(node.text)})`;
       }
     }
     function getChildren(ast) {
@@ -257,9 +257,8 @@
     function createRenderFunction(html) {
       const ast = parseHtmlToAst(html);
       const code = generate(ast);
-      console.log(ast);
       console.log(code);
-      return new Function(`reutrn ${code}`);
+      return new Function('_c', '_s', '_v', 'message', `return ${code}`);
     }
 
     function mountComponent(vm) {
@@ -288,8 +287,6 @@
         if (!options.render) {
           options.render = createRenderFunction(vm.$el.outerHTML);
         }
-        // options.render();
-
         mountComponent(vm);
       };
     }
@@ -319,13 +316,13 @@
         }
         return typeof value === 'object' ? JSON.stringify(value) : value;
       };
-      Ember.prototype._v = function () {
+      Ember.prototype._v = function (text) {
         return createTextVnode(text);
       };
       Ember.prototype._render = function () {
         const vm = this;
         const render = vm.$options.render;
-        const vnode = render.call(vm);
+        const vnode = render(vm._c, vm._s, vm._v, vm.$options.data.message);
         console.log(vnode);
         return vnode;
       };

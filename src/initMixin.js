@@ -19,7 +19,6 @@ function initMixin(Ember) {
         if (!options.render) {
             options.render = createRenderFunction(vm.$el.outerHTML);
         }
-        // options.render();
 
         mountComponent(vm);
     }

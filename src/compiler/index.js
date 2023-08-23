@@ -3,9 +3,8 @@ import { generate } from "./generate";
 function createRenderFunction(html) {
     const ast = parseHtmlToAst(html);
     const code = generate(ast);
-    console.log(ast);
     console.log(code);
-    return new Function(`reutrn ${code}`);
+    return new Function('_c', '_s', '_v', 'message', `return ${code}`);
 }
 
 export {
