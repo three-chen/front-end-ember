@@ -17,7 +17,18 @@ function renderMixin(Ember) {
     Ember.prototype._render = function () {
         const vm = this;
         const render = vm.$options.render;
-        const vnode = render(vm._c, vm._s, vm._v, vm.$options.data.message);
+        // const proxyInstance = new Proxy(vm, {
+        //     get(target, key) {
+        //         if (key in target) {
+        //             return target[key];
+        //         } else if (key in target.$options.data) {
+        //             return target.$options.data[key];
+        //         }
+        //         return undefined;
+        //     },
+        // });
+
+        const vnode = render.call(vm);
         console.log(vnode);
         return vnode;
     }

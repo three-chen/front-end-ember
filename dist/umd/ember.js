@@ -257,8 +257,7 @@
     function createRenderFunction(html) {
       const ast = parseHtmlToAst(html);
       const code = generate(ast);
-      console.log(code);
-      return new Function('_c', '_s', '_v', 'message', `return ${code}`);
+      return new Function(`with(this){return ${code}}`);
     }
 
     function mountComponent(vm) {
@@ -274,6 +273,19 @@
       Ember.prototype._init = function (options) {
         const vm = this;
         vm.$options = options;
+        vm.$data = options.data;
+        for (let key in vm.$data) {
+          if (vm.$data.hasOwnProperty(key)) {
+            Object.defineProperty(vm, key, {
+              get: function () {
+                return vm.$data[key];
+              },
+              set: function (value) {
+                vm.$data[key] = value;
+              }
+            });
+          }
+        }
         // initState(vm);
         // initRender(vm);
         if (vm.$options.el) {
@@ -322,7 +334,18 @@
       Ember.prototype._render = function () {
         const vm = this;
         const render = vm.$options.render;
-        const vnode = render(vm._c, vm._s, vm._v, vm.$options.data.message);
+        // const proxyInstance = new Proxy(vm, {
+        //     get(target, key) {
+        //         if (key in target) {
+        //             return target[key];
+        //         } else if (key in target.$options.data) {
+        //             return target.$options.data[key];
+        //         }
+        //         return undefined;
+        //     },
+        // });
+
+        const vnode = render.call(vm);
         console.log(vnode);
         return vnode;
       };

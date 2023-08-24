@@ -6,6 +6,19 @@ function initMixin(Ember) {
     Ember.prototype._init = function (options) {
         const vm = this;
         vm.$options = options;
+        vm.$data = options.data;
+        for (let key in vm.$data) {
+            if (vm.$data.hasOwnProperty(key)) {
+                Object.defineProperty(vm, key, {
+                    get: function () {
+                        return vm.$data[key];
+                    },
+                    set: function (value) {
+                        vm.$data[key] = value;
+                    }
+                });
+            }
+        }
         // initState(vm);
         // initRender(vm);
         if (vm.$options.el) {
