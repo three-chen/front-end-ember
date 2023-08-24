@@ -217,7 +217,7 @@
           return `_v(${code.join('+')})`;
         }
       } else if (node.type === 8) {
-        return `_v(${JSON.stringify(node.text)})`;
+        return `_comment(${JSON.stringify(node.text)})`;
       }
     }
     function getChildren(ast) {
@@ -260,11 +260,67 @@
       return new Function(`with(this){return ${code}}`);
     }
 
+    function patch(oldNode, vnode) {
+      console.log(vnode);
+      const el = createElement$1(vnode);
+      const parentNode = oldNode.parentNode;
+      parentNode.insertBefore(el, oldNode.nextSibling);
+      parentNode.removeChild(oldNode);
+    }
+    function createElement$1(vnode) {
+      const {
+        tag,
+        props,
+        children,
+        text,
+        comment
+      } = vnode;
+
+      //标签节点
+      if (typeof tag === 'string') {
+        vnode.el = document.createElement(tag);
+
+        // 设置属性
+        updateProps(vnode);
+        children.forEach(child => vnode.el.appendChild(createElement$1(child)));
+      }
+      //文本节点
+      else if (text) {
+        vnode.el = document.createTextNode(text);
+      }
+      //注释节点
+      else {
+        vnode.el = document.createComment(comment);
+      }
+      return vnode.el;
+    }
+    function updateProps(vnode) {
+      const el = vnode.el;
+      const props = vnode.props || {};
+      for (const key in props) {
+        const value = props[key];
+        if (key === "class") {
+          el.className = value;
+        } else if (key === "style") {
+          for (const style in value) {
+            if (Object.hasOwnProperty.call(value, style)) {
+              const element = value[style];
+              el.style[style] = element;
+            }
+          }
+        } else {
+          el.setAttribute(key, value);
+        }
+      }
+    }
+
     function mountComponent(vm) {
       vm._update(vm._render());
     }
     function lifeCycleMixin(Ember) {
       Ember.prototype._update = function (vnode) {
+        const vm = this;
+        patch(vm.$el, vnode);
       };
     }
 
@@ -307,14 +363,18 @@
       return vnode(tag, attrs, children);
     }
     function createTextVnode(text) {
-      return vnode(undefined, undefined, undefined, text);
+      return vnode(undefined, undefined, undefined, text, undefined);
     }
-    function vnode(tag, props, children, text) {
+    function createCommetVnode(comment) {
+      return vnode(undefined, undefined, undefined, undefined, comment);
+    }
+    function vnode(tag, props, children, text, comment) {
       return {
         tag,
         props,
         children,
-        text
+        text,
+        comment
       };
     }
 
@@ -331,6 +391,9 @@
       Ember.prototype._v = function (text) {
         return createTextVnode(text);
       };
+      Ember.prototype._comment = function (text) {
+        return createCommetVnode(text);
+      };
       Ember.prototype._render = function () {
         const vm = this;
         const render = vm.$options.render;
@@ -346,7 +409,6 @@
         // });
 
         const vnode = render.call(vm);
-        console.log(vnode);
         return vnode;
       };
     }

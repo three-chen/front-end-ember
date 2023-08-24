@@ -3,20 +3,25 @@ function createElement(tag, attrs = {}, ...children) {
 }
 
 function createTextVnode(text) {
-    return vnode(undefined, undefined, undefined, text);
+    return vnode(undefined, undefined, undefined, text, undefined);
 }
 
-function vnode(tag, props, children, text) {
+function createCommetVnode(comment) {
+    return vnode(undefined, undefined, undefined, undefined, comment);
+}
+
+function vnode(tag, props, children, text, comment) {
     return {
         tag,
         props,
         children,
-        text
+        text,
+        comment
     }
 }
 
 export {
-    createElement,
+    createCommetVnode, createElement,
     createTextVnode
 };
 

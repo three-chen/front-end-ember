@@ -35,7 +35,7 @@ function generateChild(node) {
             return `_v(${code.join('+')})`;
         }
     } else if (node.type === 8) {
-        return `_v(${JSON.stringify(node.text)})`;
+        return `_comment(${JSON.stringify(node.text)})`;
     }
 }
 

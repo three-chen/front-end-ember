@@ -1,4 +1,4 @@
-import { createElement, createTextVnode } from './vnode';
+import { createCommetVnode, createElement, createTextVnode } from './vnode';
 
 function renderMixin(Ember) {
     Ember.prototype._c = function () {
@@ -12,6 +12,10 @@ function renderMixin(Ember) {
     }
     Ember.prototype._v = function (text) {
         return createTextVnode(text);
+    }
+
+    Ember.prototype._comment = function (text) {
+        return createCommetVnode(text);
     }
 
     Ember.prototype._render = function () {
@@ -29,7 +33,6 @@ function renderMixin(Ember) {
         // });
 
         const vnode = render.call(vm);
-        console.log(vnode);
         return vnode;
     }
 }
